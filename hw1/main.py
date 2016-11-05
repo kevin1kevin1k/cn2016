@@ -14,7 +14,7 @@ def send_(msg):
 while True:
     line = cli_socket.recv(1024)
     if line[:4] == 'PING':
-        send(bytes(line.replace('PING', 'PONG')), cli_socket)
+        cli_socket.send(bytes(line.replace('PING', 'PONG')))
         continue
     
     line = line.rstrip()
@@ -43,6 +43,18 @@ while True:
                 send_('%f (%s)' % (ans, nickname))
             except:
                 send_('Format Error (%s)' % nickname)
+        elif msg.startswith('@youtube '):
+            query = urllib.urlencode({'search_query': msg[9:]})
+            url = 'http://www.youtube.com/results?' + query
+            html = urllib.urlopen(url)
+            soup = BeautifulSoup(html, 'lxml')
+            try:
+                song = soup.find(class_='yt-lockup-title').find('a')
+                song_url = 'http://www.youtube.com' + song['href']
+                song_title = song['title']
+                send_('[%s] %s (%s)' % (song_url, song_title, nickname))
+            except:
+                send_('No result found. (%s)' % nickname)
         
     
 cli_socket.close()
