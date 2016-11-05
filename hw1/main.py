@@ -16,7 +16,7 @@ while True:
     if len(line) < 2:
         print 'Error: len(line) < 2, line:', line
         break
-    print i, line
+    print line
     # cli_socket.send_(bytes('PRIVMSG #CN_Demo ' + 'hello ' + '\r\n'))
     if line[:4] == 'PING':
         send_(line.replace('PING', 'PONG'), cli_socket)
