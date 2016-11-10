@@ -25,7 +25,7 @@ while True:
     print line
     
     if 'PRIVMSG' in line:
-        nickname = line[1 : line.find('!~')]
+        nickname = line[1 : line.find('!')]
         msg = line.split(':')[-1]
         if msg == '@help':
             send_('@repeat <String> (%s)' % nickname)
