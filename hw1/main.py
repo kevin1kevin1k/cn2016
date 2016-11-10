@@ -2,14 +2,18 @@ import socket
 import urllib
 from bs4 import BeautifulSoup
 
+config = open('config')
+for line in config:
+    exec(line)
+
 cli_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cli_socket.connect( ('irc.freenode.net', 6667) )
 cli_socket.send(bytes('NICK helloooooo \r\n'))
 cli_socket.send(bytes('USER beforeAT 8 * :realname \r\n'))
-cli_socket.send(bytes('JOIN #CN_Demo ILoveTA \r\n'))
+cli_socket.send(bytes('JOIN %s %s \r\n' % (CHAN, CHAN_KEY)))
 
 def send_(msg):
-    cli_socket.send(bytes('PRIVMSG #CN_Demo :%s \r\n' % msg))
+    cli_socket.send(bytes('PRIVMSG %s :%s \r\n' % (CHAN, msg)))
 
 while True:
     line = cli_socket.recv(1024)
