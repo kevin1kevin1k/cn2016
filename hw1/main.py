@@ -1,20 +1,23 @@
 import socket
 import urllib
 from bs4 import BeautifulSoup
+import random
 
 config = open('config')
 for line in config:
     exec(line)
+my_nickname = 'helloooooo'
 
 cli_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cli_socket.connect( ('irc.freenode.net', 6667) )
-cli_socket.send(bytes('NICK helloooooo \r\n'))
+cli_socket.send(bytes('NICK %s \r\n' % my_nickname))
 cli_socket.send(bytes('USER beforeAT 8 * :realname \r\n'))
 cli_socket.send(bytes('JOIN %s %s \r\n' % (CHAN, CHAN_KEY)))
 
 def send_(msg):
     cli_socket.send(bytes('PRIVMSG %s :%s \r\n' % (CHAN, msg)))
 
+player = ''
 while True:
     line = cli_socket.recv(1024)
     if line[:4] == 'PING':
@@ -45,6 +48,31 @@ while True:
             try:
                 ans = eval(msg)
                 send_('%f (%s)' % (ans, nickname))
+            except:
+                send_('Format Error (%s)' % nickname)
+        elif msg.startswith('@play ' + my_nickname):
+            if player == nickname:
+                send_('You are playing. (%s)' % nickname)
+            elif player == '':
+                player = nickname
+                answer = random.randint(0, 100)
+                times = 5
+                send_('Game start! Guess the number from 0 to 100, inclusive (%d times left) (%s)' % (times, nickname))
+        elif msg.startswith('@guess ') and player == nickname:
+            try:
+                guess = int(msg[7:])
+                times -= 1
+                if answer == guess:
+                    send_('Congratulations! (%s)' % nickname)
+                    player = ''
+                else:
+                    if times == 0:
+                        send_('Game over. (%s)' % nickname)
+                        player = ''
+                    elif answer < guess:
+                        send_('Smaller. (%d times left) (%s)' % (times, nickname))
+                    else:
+                        send_('Larger. (%d times left) (%s)' % (times, nickname))
             except:
                 send_('Format Error (%s)' % nickname)
         elif msg.startswith('@youtube '):
