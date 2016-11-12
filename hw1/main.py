@@ -22,13 +22,15 @@ if __name__ == '__main__':
     config = open('config')
     for line in config:
         exec(line)
-    my_nickname = 'helloooooo'
+    my_nickname = 'Thesaurus'
 
     cli_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     cli_socket.connect( ('irc.freenode.net', 6667) )
     cli_socket.send(bytes('NICK %s \r\n' % my_nickname))
     cli_socket.send(bytes('USER beforeAT 8 * :realname \r\n'))
     cli_socket.send(bytes('JOIN %s %s \r\n' % (CHAN, CHAN_KEY)))
+    
+    send_("Hi, I'm %s" % my_nickname)
 
     player = ''
     while True:
@@ -81,7 +83,7 @@ if __name__ == '__main__':
                         player = ''
                     else:
                         if times == 0:
-                            send_('Game over. (%s)' % nickname)
+                            send_('Game over. Answer is %d. (%s)' % (answer, nickname))
                             player = ''
                         elif answer < guess:
                             send_('Smaller. (%d times left) (%s)' % (times, nickname))
