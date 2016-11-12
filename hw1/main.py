@@ -37,7 +37,7 @@ if __name__ == '__main__':
             cli_socket.send(bytes(line.replace('PING', 'PONG')))
             continue
         
-        line = line.rstrip()
+        line = line.rstrip('\r\n')
         if len(line) < 2:
             print 'Error: len(line) < 2, line:', line
             break
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         if 'PRIVMSG' in line:
             nickname = line[1 : line.find('!')]
             msg = line.split(':')[-1]
-            if msg == '@help':
+            if msg.startswith('@help'):
                 send_('@repeat <String> (%s)' % nickname)
                 send_('@cal <Expression> (%s)' % nickname)
                 send_('@play <Robot Name> (%s)' % nickname)
