@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include "UDP.h"
 
 #define MAX_LEN 100
 #define PAYLOAD 1024
@@ -26,18 +25,10 @@ int main(int argc, char *argv[]) {
     
     int listen_fd;
     struct sockaddr_in server, client;
-    listen_fd = socket(AF_INET, SOCK_DGRAM, 0);
-    memset(&server, 0, sizeof(server));
-    server.sin_family = AF_INET;
-    server.sin_port = htons(9487);
-    server.sin_addr.s_addr = htonl(INADDR_ANY);
-    bind(listen_fd, (struct sockaddr *)&server, sizeof(server));
+    create_socket(&listen_fd, &server, 9487);
     
     struct sockaddr_in agent;
-    memset(&agent, 0, sizeof(agent));
-    agent.sin_family = AF_INET;
-    agent.sin_port = htons(atoi(agent_port));
-    inet_pton(AF_INET, agent_ip, &agent.sin_addr);
+    set_addr(&agent, agent_ip, atoi(agent_port));
 
     char buf[PAYLOAD+1];
     while (1) {

@@ -1,7 +1,7 @@
 TARGET = sender agent receiver
 CFLAGS = -O2 -Wall
 
-%: %.c
+%: %.c UDP.h
 	$(CC) $(CFLAGS) $< -o $@
 
 all: $(TARGET)

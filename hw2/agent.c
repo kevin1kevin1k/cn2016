@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include "UDP.h"
 
 #define MAX_LEN 1024
 
@@ -20,24 +19,11 @@ int main(int argc, char *argv[]) {
     char buf[1024];
     int listen_fd;
     struct sockaddr_in server, client;
-    listen_fd = socket(AF_INET, SOCK_DGRAM, 0);
-    memset(&server, 0, sizeof(server));
-    server.sin_family = AF_INET;
-    server.sin_port = htons(7487);
-    server.sin_addr.s_addr = htonl(INADDR_ANY);
-    bind(listen_fd, (struct sockaddr *)&server, sizeof(server));
+    create_socket(&listen_fd, &server, 7487);
     
-    struct sockaddr_in sender;
-    memset(&sender, 0, sizeof(sender));
-    sender.sin_family = AF_INET;
-    sender.sin_port = htons(atoi(sender_port));
-    inet_pton(AF_INET, sender_ip, &sender.sin_addr);
-    
-    struct sockaddr_in receiver;
-    memset(&receiver, 0, sizeof(receiver));
-    receiver.sin_family = AF_INET;
-    receiver.sin_port = htons(atoi(receiver_port));
-    inet_pton(AF_INET, receiver_ip, &receiver.sin_addr);
+    struct sockaddr_in sender, receiver;
+    set_addr(&sender, sender_ip, atoi(sender_port));
+    set_addr(&receiver, receiver_ip, atoi(receiver_port));
 
     while (1) {
         socklen_t len = sizeof(client);
