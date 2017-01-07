@@ -14,7 +14,6 @@ int main(int argc, char *argv[]) {
     strcpy(receiver_ip, argv[3]);
     strcpy(receiver_port, argv[4]);
 
-    char buf[PAYLOAD+1];
     int listen_fd;
     struct sockaddr_in server, client;
     create_socket(&listen_fd, &server, 7487);
@@ -24,10 +23,10 @@ int main(int argc, char *argv[]) {
     set_addr(&receiver, receiver_ip, atoi(receiver_port));
 
     while (1) {
-        memset(&buf, 0, sizeof(buf));
-        my_recv(listen_fd, buf, &client);
+        Packet pkt;
+        my_recv(listen_fd, &pkt, &client);
         printf("get\tdata\n");
-        my_send(listen_fd, buf, &receiver);
+        my_send(listen_fd, &pkt, &receiver);
         printf("fwd\tdata\n");
     }
     close(listen_fd);

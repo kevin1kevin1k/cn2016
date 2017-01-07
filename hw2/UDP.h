@@ -4,6 +4,15 @@
 #define MAX_LEN 100
 #define PAYLOAD 1024
 
+enum {DATA, ACK, FIN, FINACK};
+enum {SNDR, RCVR};
+
+typedef struct {
+    int type, from, seq;
+    // char *buf;
+    char buf[PAYLOAD+1];
+} Packet;
+
 void set_addr(struct sockaddr_in *addr, char *ip, int port) {
     memset(addr, 0, sizeof(*addr));
     addr->sin_family = AF_INET;
@@ -20,13 +29,13 @@ void create_socket(int *fd, struct sockaddr_in *addr, int port) {
     bind(*fd, (struct sockaddr *)addr, sizeof(*addr));
 }
 
-void my_send(int fd, void *obj, struct sockaddr_in *addr) {
+void my_send(int fd, Packet *obj, struct sockaddr_in *addr) {
     socklen_t len = sizeof(*addr);
-    sendto(fd, obj, sizeof(obj), 0, (struct sockaddr *)addr, len);
+    sendto(fd, obj, sizeof(*obj), 0, (struct sockaddr *)addr, len);
 }
 
 
-void my_recv(int fd, void *obj, struct sockaddr_in *addr) {
+void my_recv(int fd, Packet *obj, struct sockaddr_in *addr) {
     socklen_t len = sizeof(*addr);
-    recvfrom(fd, obj, sizeof(obj), 0, (struct sockaddr *)addr, &len);
+    recvfrom(fd, obj, sizeof(*obj), 0, (struct sockaddr *)addr, &len);
 }

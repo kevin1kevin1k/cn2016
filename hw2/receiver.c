@@ -27,15 +27,14 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in agent;
     set_addr(&agent, agent_ip, atoi(agent_port));
 
-    char buf[PAYLOAD+1];
     while (1) {
-        memset(buf, 0, PAYLOAD);
-        my_recv(listen_fd, buf, &client);
+        Packet pkt;
+        my_recv(listen_fd, &pkt, &client);
         printf("recv\tdata\n");
-        if (!strcmp(buf, "fin")) {
+        if (!strcmp(pkt.buf, "fin")) {
             break;
         }
-        fwrite(buf, 1, strlen(buf), fout);
+        fwrite(pkt.buf, 1, strlen(pkt.buf), fout);
     }
     close(listen_fd);
     fclose(fout);

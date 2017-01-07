@@ -27,17 +27,20 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in agent;
     set_addr(&agent, agent_ip, atoi(agent_port));
 
-    char buf[PAYLOAD+1];
+    int seq = 1;
     while (1) {
-        memset(buf, 0, PAYLOAD);
-        int res = fread(buf, 1, PAYLOAD, fin);
+        Packet pkt = {DATA, SNDR, seq, ""};
+        int res = fread(pkt.buf, 1, PAYLOAD, fin);
         if (res == 0) {
             break;
         }
-        my_send(listen_fd, buf, &agent);
-        printf("send\tdata\n");
+        my_send(listen_fd, &pkt, &agent);
+        printf("send\tdata %s\n", pkt.buf);
     }
-    my_send(listen_fd, "fin", &agent);
+    
+    Packet pkt = {FIN, SNDR, 0, ""};
+    strcpy(pkt.buf, "fin");
+    my_send(listen_fd, &pkt, &agent);
 
     close(listen_fd);
     fclose(fin);
