@@ -25,9 +25,27 @@ int main(int argc, char *argv[]) {
     while (1) {
         Packet pkt;
         my_recv(listen_fd, &pkt, &client);
-        printf("get\tdata\n");
-        my_send(listen_fd, &pkt, &receiver);
-        printf("fwd\tdata\n");
+        if (pkt.type == DATA) {
+            printf("get\tdata\t#%d\n", pkt.seq);
+            my_send(listen_fd, &pkt, &receiver);
+            printf("fwd\tdata\t#%d\n", pkt.seq);
+        }
+        else if (pkt.type == ACK) {
+            printf("get\tack\t#%d\n", pkt.seq);
+            my_send(listen_fd, &pkt, &sender);
+            printf("fwd\tack\t#%d\n", pkt.seq);
+        }
+        else if (pkt.type == FIN) {
+            printf("get\tfin\n");
+            my_send(listen_fd, &pkt, &receiver);
+            printf("fwd\tfin\n");
+        }
+        else if (pkt.type == FINACK) {
+            printf("get\tfinack\n");
+            my_send(listen_fd, &pkt, &sender);
+            printf("fwd\tfinack\n");
+            break;
+        }
     }
     close(listen_fd);
     

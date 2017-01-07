@@ -35,11 +35,20 @@ int main(int argc, char *argv[]) {
             break;
         }
         my_send(listen_fd, &pkt, &agent);
-        printf("send\tdata %s\n", pkt.buf);
+        printf("send\tdata\t#%d\n", pkt.seq);
+        my_recv(listen_fd, &pkt, &client);
+        if (pkt.type == ACK) {
+            printf("recv\tack\t#%d\n", pkt.seq);
+        }
+        else if (pkt.type == FINACK) {
+            printf("recv\tfinack\n");
+            break;
+        }
+
+        seq++;
     }
     
     Packet pkt = {FIN, 0, ""};
-    strcpy(pkt.buf, "fin");
     my_send(listen_fd, &pkt, &agent);
 
     close(listen_fd);

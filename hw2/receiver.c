@@ -30,11 +30,20 @@ int main(int argc, char *argv[]) {
     while (1) {
         Packet pkt;
         my_recv(listen_fd, &pkt, &client);
-        printf("recv\tdata\n");
-        if (!strcmp(pkt.buf, "fin")) {
+        if (pkt.type == DATA) {
+            printf("recv\tdata\t#%d\n", pkt.seq);
+            Packet ack = {ACK, pkt.seq, ""};
+            my_send(listen_fd, &ack, &agent);
+            printf("send\tack\t#%d\n", pkt.seq);
+            fwrite(pkt.buf, 1, strlen(pkt.buf), fout);
+        }
+        else if (pkt.type == FIN) {
+            printf("recv\tfin\n");
+            Packet finack = {FINACK, 0, ""};
+            my_send(listen_fd, &finack, &agent);
+            printf("send\tfinack\n");
             break;
         }
-        fwrite(pkt.buf, 1, strlen(pkt.buf), fout);
     }
     close(listen_fd);
     fclose(fout);
