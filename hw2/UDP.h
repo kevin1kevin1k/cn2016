@@ -5,11 +5,9 @@
 #define PAYLOAD 1024
 
 enum {DATA, ACK, FIN, FINACK};
-enum {SNDR, RCVR};
 
 typedef struct {
-    int type, from, seq;
-    // char *buf;
+    int type, seq;
     char buf[PAYLOAD+1];
 } Packet;
 

@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
     int seq = 1;
     while (1) {
-        Packet pkt = {DATA, SNDR, seq, ""};
+        Packet pkt = {DATA, seq, ""};
         int res = fread(pkt.buf, 1, PAYLOAD, fin);
         if (res == 0) {
             break;
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
         printf("send\tdata %s\n", pkt.buf);
     }
     
-    Packet pkt = {FIN, SNDR, 0, ""};
+    Packet pkt = {FIN, 0, ""};
     strcpy(pkt.buf, "fin");
     my_send(listen_fd, &pkt, &agent);
 
