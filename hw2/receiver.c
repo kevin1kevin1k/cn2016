@@ -3,9 +3,6 @@
 #include <string.h>
 #include "UDP.h"
 
-#define MAX_LEN 100
-#define PAYLOAD 1024
-
 int main(int argc, char *argv[]) {
     if (argc != 4) {
         printf("Usage: %s agent_ip agent_port output_path\n", argv[0]);
@@ -33,8 +30,7 @@ int main(int argc, char *argv[]) {
     char buf[PAYLOAD+1];
     while (1) {
         memset(buf, 0, PAYLOAD);
-        socklen_t len = sizeof(agent);
-        recvfrom(listen_fd, buf, PAYLOAD, 0, (struct sockaddr *)&client, &len);
+        my_recv(listen_fd, buf, &client);
         printf("recv\tdata\n");
         if (!strcmp(buf, "fin")) {
             break;

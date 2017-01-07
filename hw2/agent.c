@@ -3,8 +3,6 @@
 #include <string.h>
 #include "UDP.h"
 
-#define MAX_LEN 1024
-
 int main(int argc, char *argv[]) {
     if (argc != 5) {
         printf("Usage: %s sender_ip sender_port receiver_ip receiver_port\n", argv[0]);
@@ -16,7 +14,7 @@ int main(int argc, char *argv[]) {
     strcpy(receiver_ip, argv[3]);
     strcpy(receiver_port, argv[4]);
 
-    char buf[1024];
+    char buf[PAYLOAD+1];
     int listen_fd;
     struct sockaddr_in server, client;
     create_socket(&listen_fd, &server, 7487);
@@ -26,11 +24,10 @@ int main(int argc, char *argv[]) {
     set_addr(&receiver, receiver_ip, atoi(receiver_port));
 
     while (1) {
-        socklen_t len = sizeof(client);
         memset(&buf, 0, sizeof(buf));
-        recvfrom(listen_fd, buf, MAX_LEN, 0, (struct sockaddr *)&client, &len);
+        my_recv(listen_fd, buf, &client);
         printf("get\tdata\n");
-        sendto(listen_fd, buf, strlen(buf), 0, (struct sockaddr *)&receiver, len);
+        my_send(listen_fd, buf, &receiver);
         printf("fwd\tdata\n");
     }
     close(listen_fd);
