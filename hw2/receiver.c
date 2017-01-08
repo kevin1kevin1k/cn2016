@@ -3,7 +3,11 @@
 #include <string.h>
 #include "UDP.h"
 
-#define BUFFER_SIZE 5 // should be 32
+#ifdef TEST
+#define BUFFER_SIZE 5
+#else
+#define BUFFER_SIZE 32
+#endif
 
 int recved[1000000];
 char buffer[BUFFER_SIZE][PAYLOAD+1];

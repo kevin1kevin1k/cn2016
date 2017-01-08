@@ -26,7 +26,9 @@ int main(int argc, char *argv[]) {
 
     srand(time(NULL));
     int losses = 0, recvs = 0;
+#ifdef TEST
     int flag = 0; // testing
+#endif
     while (1) {
         Packet pkt;
         my_recv(listen_fd, &pkt, &client);
@@ -34,9 +36,13 @@ int main(int argc, char *argv[]) {
             printf("get\tdata\t#%d\n", pkt.seq);
             recvs++;
             
-            // if (rand() < loss_rate) {
+#ifdef TEST
             if (pkt.seq == 4 && flag == 0) { // testing
                 flag = 1; // testing
+#else
+            double r = 1.0 * rand() / RAND_MAX;
+            if (r < loss_rate) {
+#endif
                 losses++;
                 printf("drop\tdata\t#%d,\tloss rate = %.4f\n", pkt.seq, 1.0 * losses / recvs);
             }

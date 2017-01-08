@@ -4,6 +4,10 @@
 #include <fcntl.h>
 #include "UDP.h"
 
+#ifndef TEST
+#define TEST 0
+#endif
+
 int acked[1000000];
 
 int max(int a, int b) {
@@ -45,7 +49,7 @@ int main(int argc, char *argv[]) {
     int seq = 0;
     int winSize = 1;
     int left = 1;
-    int threshold = 2; // should be 16
+    int threshold = TEST ? 2 : 16;
     int max_sent = 0;
     int cumu = 0; // cumulative counter for congestion avoidance
     int finished = 0;
@@ -63,7 +67,6 @@ int main(int argc, char *argv[]) {
             fseek(input, PAYLOAD * (seq-1), SEEK_SET);
             int res = fread(pkt.buf, 1, PAYLOAD, input);
             if (res == 0) {
-                // printf("no data read, seq=%d, left=%d, cumu=%d, max_sent=%d\n", seq, left, cumu, max_sent);
                 finished = 1;
                 break;
             }
