@@ -33,7 +33,7 @@ void my_send(int fd, Packet *obj, struct sockaddr_in *addr) {
 }
 
 
-void my_recv(int fd, Packet *obj, struct sockaddr_in *addr) {
+int my_recv(int fd, Packet *obj, struct sockaddr_in *addr) {
     socklen_t len = sizeof(*addr);
-    recvfrom(fd, obj, sizeof(*obj), 0, (struct sockaddr *)addr, &len);
+    return recvfrom(fd, obj, sizeof(*obj), 0, (struct sockaddr *)addr, &len);
 }
