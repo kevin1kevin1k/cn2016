@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     int finished = 0;
     while (1) {
         if (finished && (left == max_sent + 1)) {
-            Packet pkt = {FIN, 0, ""};
+            Packet pkt = {FIN, 0, 0, ""};
             my_send(listen_fd, &pkt, &agent);
             printf("send\tfin\n");
             goto WAIT;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
         
         while (seq + 1 < left + winSize) {
             seq++;
-            Packet pkt = {DATA, seq, ""};
+            Packet pkt = {DATA, seq, 0, ""};
             fseek(input, PAYLOAD * (seq-1), SEEK_SET);
             int res = fread(pkt.buf, 1, PAYLOAD, input);
             if (res == 0) {
@@ -74,6 +74,7 @@ int main(int argc, char *argv[]) {
                 printf("Error: read file\n");
                 exit(1);
             }
+            pkt.len = res;
             
             if (seq > max_sent) {
                 printf("send\tdata\t#%d,\twinSize = %d\n", pkt.seq, winSize);

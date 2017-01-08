@@ -11,10 +11,11 @@
 
 int recved[1000000];
 char buffer[BUFFER_SIZE][PAYLOAD+1];
+int lens[BUFFER_SIZE];
 
 void flush(int n, FILE *f) {
     for (int i = 0; i < n; i++) {
-        fwrite(buffer[i], 1, strlen(buffer[i]), f);
+        fwrite(buffer[i], 1, lens[i], f);
     }
     printf("flush\n");
 }
@@ -57,12 +58,14 @@ int main(int argc, char *argv[]) {
                     printf("recv\tdata\t#%d\n", pkt.seq);
                     cumu++;
                 }
-                Packet ack = {ACK, pkt.seq, ""};
+                Packet ack = {ACK, pkt.seq, 0, ""};
                 my_send(listen_fd, &ack, &agent);
                 printf("send\tack\t#%d\n", pkt.seq);
                 recved[pkt.seq]++;
                 
-                strcpy(buffer[pkt.seq - left], pkt.buf);
+                int i = pkt.seq - left;
+                strcpy(buffer[i], pkt.buf);
+                lens[i] = pkt.len;
             }
             else {
                 printf("drop\tdata\t#%d\n", pkt.seq);
@@ -76,7 +79,7 @@ int main(int argc, char *argv[]) {
         }
         else if (pkt.type == FIN) {
             printf("recv\tfin\n");
-            Packet finack = {FINACK, 0, ""};
+            Packet finack = {FINACK, 0, 0, ""};
             my_send(listen_fd, &finack, &agent);
             printf("send\tfinack\n");
             break;

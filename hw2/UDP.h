@@ -7,7 +7,7 @@
 enum {DATA, ACK, FIN, FINACK};
 
 typedef struct {
-    int type, seq;
+    int type, seq, len;
     char buf[PAYLOAD+1];
 } Packet;
 
