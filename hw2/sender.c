@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
             goto WAIT;
         }
         
-        for (int i = 0; i < winSize; i++) {
+        while (seq + 1 < left + winSize) {
             seq++;
             Packet pkt = {DATA, seq, ""};
             fseek(input, PAYLOAD * (seq-1), SEEK_SET);
