@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
                 recved[pkt.seq]++;
                 
                 int i = pkt.seq - left;
-                strcpy(buffer[i], pkt.buf);
+                memcpy(buffer[i], pkt.buf, sizeof(buffer[i]));
                 lens[i] = pkt.len;
             }
             else {
