@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in agent;
     set_addr(&agent, agent_ip, atoi(agent_port));
 
-    struct fd_set master_set, working_set;
+    fd_set master_set, working_set;
     struct timeval timeout;
     FD_ZERO(&master_set);
     FD_SET(listen_fd, &master_set);
